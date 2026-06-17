@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using Dsw2026Ej15.Domain;
 
 namespace Dsw2026Ej15.Data
 {
-   public interface IPersistence
+    public interface IPersistence
     {
-		List<Doctor> GetDoctors();
-		List<Speciality> GetSpecialities();
+        List<Doctor> GetDoctors();
+        List<Speciality> GetSpecialities();
 
-		void AddDoctor(Doctor doctor);
-	}
+        Doctor AddDoctor(Doctor doctor);
+        Doctor? GetDoctorById(Guid id);
+        void UpdateDoctor(Doctor doctor);
+    }
 }

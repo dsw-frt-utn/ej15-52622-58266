@@ -1,8 +1,5 @@
-﻿using Dsw2026Ej15.Domain;
-using System;
-using System.Collections.Generic;
-using System.Numerics;
-using System.Text;
+using System.Text.Json;
+using Dsw2026Ej15.Domain;
 
 namespace Dsw2026Ej15.Data
 {
@@ -10,8 +7,6 @@ namespace Dsw2026Ej15.Data
     {
         private readonly List<Doctor> _doctors;
         private readonly List<Speciality> _specialities;
-
-        public object JsonHelper { get; private set; }
 
         public PersistenceInMemory()
         {
@@ -29,46 +24,46 @@ namespace Dsw2026Ej15.Data
             return _specialities;
         }
 
-        public void AddDoctor(Doctor doctor)
+        public Doctor AddDoctor(Doctor doctor)
         {
             _doctors.Add(doctor);
+            return doctor;
+        }
+
+        public Doctor? GetDoctorById(Guid id)
+        {
+            return _doctors.FirstOrDefault(d => d.Id == id);
+        }
+
+        public void UpdateDoctor(Doctor doctor)
+        {
+            var index = _doctors.FindIndex(d => d.Id == doctor.Id);
+
+            if (index >= 0)
+            {
+                _doctors[index] = doctor;
+            }
         }
 
         private List<Speciality> LoadSpecialities()
         {
-            return JsonHelper.ReadFromFile<Speciality>("specialities");
-        }
-        public Doctor CreateDoctor(string name, string licenseNumber, int specialityId)
-        {
-          
+            var filePath = Path.Combine(AppContext.BaseDirectory, "specialities.json");
 
-            if (string.IsNullOrWhiteSpace(name))
-                throw new Exception("El nombre es requerido");
-
-            if (string.IsNullOrWhiteSpace(licenseNumber))
-                throw new Exception("La matrícula es requerida");
-
-            var speciality = _specialities.FirstOrDefault(s => s.Id == specialityId);
-
-            if (speciality == null)
-                throw new Exception("La especialidad no existe");
-
-            var doctor = new Doctor
+            if (!File.Exists(filePath))
             {
-                Name = name,
-                LicenseNumber = licenseNumber,
-                Speciality = speciality,
-                IsActive = true
-            };
+                return new List<Speciality>();
+            }
 
-            _doctors.Add(doctor);
+            var json = File.ReadAllText(filePath);
 
-            return doctor;
+            var specialities = JsonSerializer.Deserialize<List<Speciality>>(
+                json,
+                new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+            return specialities ?? new List<Speciality>();
         }
-
-    }
-
-    public interface IPersistence
-    {
     }
 }
