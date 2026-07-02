@@ -7,10 +7,9 @@ namespace Dsw2026Ej15.Data.Repositories
 {
     public class PersistenceEf : IPersistence
     {
-        // Asegúrate de que use el contexto real de Carlos: Dsw2026Ej15DbContext
         private readonly Dsw2026Ej15DbContext _context;
 
-        // El constructor también debe recibir Dsw2026Ej15DbContext
+       
         public PersistenceEf(Dsw2026Ej15DbContext context)
         {
             _context = context;
